@@ -44,6 +44,8 @@
           }
         ],
         "no-console": "off",
-        "quotes": [0, "double"]
+        "quotes": [0, "double"],
+        "function-paren-newline": 0,
+        "comma-dangle": "off"
     }
 }

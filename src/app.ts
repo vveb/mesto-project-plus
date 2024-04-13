@@ -1,21 +1,28 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
 import mongoose from 'mongoose';
+import userRouter from './routes/users';
 
 const { PORT = 3000 } = process.env;
 // создаем объект приложения
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mydb');
+const connect = async () => {
+  await mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+  app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`);
+  });
+};
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 // определяем обработчик для маршрута "/"
 app.get('/', (req: Request, res: Response) => {
   // отправляем ответ
   res.send(`<h2>Привет Express!</h2>
   ${JSON.stringify(req.query)}`);
 });
-// начинаем прослушивать подключения на 3000 порту
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-});
+
+app.use(userRouter);
+connect();
