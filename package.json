@@ -1,7 +1,7 @@
 {
-  "name": "starterkits",
+  "name": "mesto-plus",
   "version": "1.0.0",
-  "description": "< Добавьте описание проекта в свободной форме >",
+  "description": "Бекэнд для проекта Место",
   "main": "dist/app.js",
   "scripts": {
     "lint": "npx eslint src/**/*.ts",

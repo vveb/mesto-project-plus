@@ -23,13 +23,13 @@ app.use(express.urlencoded({ extended: true }));
 // определяем обработчик для маршрута "/"
 app.get('/', (req: Request, res: Response) => {
   // отправляем ответ
-  res.send(`<h2>Привет Express!</h2>
+  res.send(`<h2>Это бекэнд, а ты чего ожидал(а)?</h2>
   ${JSON.stringify(req.query)}`);
 });
 
 app.use((req: Request, _res: Response, next: NextFunction) => {
   req.user = {
-    _id: '661a8063af3fa0be39ce6f280' // вставьте сюда _id созданного в предыдущем пункте пользователя
+    _id: '661a8063af3fa0be39ce6f28' // вставьте сюда _id созданного в предыдущем пункте пользователя
   };
 
   next();
