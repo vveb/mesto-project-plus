@@ -46,6 +46,9 @@
         "no-console": "off",
         "quotes": [0, "double"],
         "function-paren-newline": 0,
-        "comma-dangle": "off"
+        "comma-dangle": "off",
+        "no-unused-vars":"warn",
+        "no-shadow":"warn",
+        "max-len": "off"
     }
 }
