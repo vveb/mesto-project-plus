@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
+import helmet from 'helmet';
 import path from 'path';
 import mongoose from 'mongoose';
 import userRouter from './routes/users';
@@ -8,15 +9,8 @@ import notFoundRouter from './routes/404-not-found';
 const { PORT = 3000 } = process.env;
 // создаем объект приложения
 const app = express();
+app.use(helmet());
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
-
-// const connect = async () => {
-//   await mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
-//   app.listen(PORT, () => {
-//     console.log(`App listening on port ${PORT}`);
-//   });
-// };
-// connect();
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
