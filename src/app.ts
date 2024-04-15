@@ -3,6 +3,7 @@ import path from 'path';
 import mongoose from 'mongoose';
 import userRouter from './routes/users';
 import cardRouter from './routes/cards';
+import notFoundRouter from './routes/404-not-found';
 
 const { PORT = 3000 } = process.env;
 // создаем объект приложения
@@ -37,6 +38,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 
 app.use(userRouter);
 app.use(cardRouter);
+app.use(notFoundRouter);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

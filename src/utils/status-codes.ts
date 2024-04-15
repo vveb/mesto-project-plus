@@ -1,0 +1,8 @@
+enum STATUS_CODES {
+  CREATED = 201,
+  NOT_FOUND = 404,
+  BAD_DATA = 400,
+  SERVER = 500,
+}
+
+export default STATUS_CODES;

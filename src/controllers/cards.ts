@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import ERROR_CODES from "../utils/error-codes";
-import Card from "../models/card";
+import STATUS_CODES from "../utils/status-codes";
 import ERROR_MESSAGES from "../utils/error-messages";
+import Card from "../models/card";
 
 export const getCards = (_req: Request, res: Response) => Card.find({})
   .then((cards) => res.send({ data: cards }))
@@ -15,15 +15,15 @@ export const createCard = (req: Request, res: Response) => {
     link,
     owner: _id,
   })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(STATUS_CODES.CREATED).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         const nameError = err.errors.name ? ' название (подпись)' : '';
         const linkError = err.errors.link ? ' ссылка на картинку' : '';
         const errorMessage = ERROR_MESSAGES.BAD_DATA_CARD + nameError + linkError;
-        return res.status(ERROR_CODES.BAD_DATA).send({ message: errorMessage });
+        return res.status(STATUS_CODES.BAD_DATA).send({ message: errorMessage });
       }
-      return res.status(ERROR_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
+      return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
     });
 };
 
@@ -32,9 +32,9 @@ export const deleteCard = (req: Request, res: Response) => Card.findByIdAndDelet
     if (card) {
       return res.send({ data: card });
     }
-    return res.status(ERROR_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.CARD_NOT_FOUND });
+    return res.status(STATUS_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.CARD_NOT_FOUND });
   })
-  .catch(() => res.status(ERROR_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER }));
+  .catch(() => res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER }));
 
 export const likeCard = (req: Request, res: Response) => Card.findByIdAndUpdate(
   req.params.cardId,
@@ -44,18 +44,18 @@ export const likeCard = (req: Request, res: Response) => Card.findByIdAndUpdate(
     if (card) {
       return res.send({ data: card });
     }
-    return res.status(ERROR_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.LIKE_CARD_NOT_FOUND });
+    return res.status(STATUS_CODES.CREATED).send({ message: ERROR_MESSAGES.LIKE_CARD_NOT_FOUND });
   })
   .catch((err) => {
     if (err.name === 'CastError') {
       if (err.path === '_id') {
-        return res.status(ERROR_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.LIKE_CARD_NOT_FOUND });
+        return res.status(STATUS_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.LIKE_CARD_NOT_FOUND });
       }
       if (err.path === 'likes') {
-        return res.status(ERROR_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.LIKE_CARD_HAVE_NO_RIGHTS });
+        return res.status(STATUS_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.LIKE_CARD_HAVE_NO_RIGHTS });
       }
     }
-    return res.status(ERROR_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
+    return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
   });
 
 export const dislikeCard = (req: Request, res: Response) => Card.findByIdAndUpdate(
@@ -66,16 +66,16 @@ export const dislikeCard = (req: Request, res: Response) => Card.findByIdAndUpda
     if (card) {
       return res.send({ data: card });
     }
-    return res.status(ERROR_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.DISLIKE_CARD_NOT_FOUND });
+    return res.status(STATUS_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.DISLIKE_CARD_NOT_FOUND });
   })
   .catch((err) => {
     if (err.name === 'CastError') {
       if (err.path === '_id') {
-        return res.status(ERROR_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.DISLIKE_CARD_NOT_FOUND });
+        return res.status(STATUS_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.DISLIKE_CARD_NOT_FOUND });
       }
       if (err.path === 'likes') {
-        return res.status(ERROR_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.DISLIKE_CARD_HAVE_NO_RIGHTS });
+        return res.status(STATUS_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.DISLIKE_CARD_HAVE_NO_RIGHTS });
       }
     }
-    return res.status(ERROR_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
+    return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
   });

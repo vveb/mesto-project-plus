@@ -8,7 +8,8 @@ enum ERROR_MESSAGES {
   USER_NOT_FOUND = "Пользователь с таким id не найден",
   BAD_DATA_USER = "Получены некорректные данные пользователя:",
   BAD_DATA_AVATAR = "Получены некорректные данные (url) для обновления аватара",
-  BAD_DATA_CARD = "Получены некорректные данные для карточки:"
+  BAD_DATA_CARD = "Получены некорректные данные для карточки:",
+  SOURCE_NOT_FOUND = "Запрашиваемый ресурс не найден",
 }
 
 export default ERROR_MESSAGES;
