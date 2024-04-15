@@ -9,10 +9,14 @@ export const getUsers = (_req: Request, res: Response) => User.find({})
   );
 
 export const getUserById = (req: Request, res: Response) => User.findById(req.params.userId)
+  .orFail()
   .then((user) => res.send({ data: user }))
   .catch((err) => {
-    if (err.name === 'CastError') {
+    if (err.name === 'DocumentNotFoundError') {
       return res.status(STATUS_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.USER_NOT_FOUND });
+    }
+    if (err.name === 'CastError') {
+      return res.status(STATUS_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.BAD_DATA_USER_ID });
     }
     return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
   });
@@ -28,9 +32,9 @@ export const createUser = (req: Request, res: Response) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         const { errors } = err;
-        const nameError = errors.name ? ' имя' : '';
-        const aboutError = errors.about ? ' описание' : '';
-        const avatarError = errors.avatar ? ' аватар' : '';
+        const nameError = errors.name ? errors.name.message : '';
+        const aboutError = errors.about ? errors.about.message : '';
+        const avatarError = errors.avatar ? errors.avatar.message : '';
         const errorMessage = ERROR_MESSAGES.BAD_DATA_USER + nameError + aboutError + avatarError;
         return res.status(STATUS_CODES.BAD_DATA).send({ message: errorMessage });
       }
@@ -42,13 +46,21 @@ export const updateUserInfo = (req: Request, res: Response) => {
   const { name, about } = req.body;
   const { _id } = req.user;
   return User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
+    .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'DocumentNotFoundError') {
         return res.status(STATUS_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.USER_NOT_FOUND });
       }
+      if (err.name === 'CastError') {
+        return res.status(STATUS_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.BAD_DATA_USER_ID });
+      }
       if (err.name === 'ValidationError') {
-        return res.status(STATUS_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.BAD_DATA_AVATAR });
+        const { errors } = err;
+        const nameError = errors.name ? errors.name.message : '';
+        const aboutError = errors.about ? errors.about.message : '';
+        const errorMessage = ERROR_MESSAGES.BAD_DATA_USER + nameError + aboutError;
+        return res.status(STATUS_CODES.BAD_DATA).send({ message: errorMessage });
       }
       return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
     });
@@ -57,17 +69,20 @@ export const updateUserInfo = (req: Request, res: Response) => {
 export const updateAvatar = (req: Request, res: Response) => {
   const { link } = req.body;
   const { _id } = req.user;
-  return User.findByIdAndUpdate(_id, { link }, { new: true })
+  return User.findByIdAndUpdate(_id, { avatar: link }, { new: true, runValidators: true })
+    .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'DocumentNotFoundError') {
         return res.status(STATUS_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.USER_NOT_FOUND });
+      }
+      if (err.name === 'CastError') {
+        return res.status(STATUS_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.BAD_DATA_USER_ID });
       }
       if (err.name === 'ValidationError') {
         const { errors } = err;
-        const nameError = errors.name ? ' имя' : '';
-        const aboutError = errors.about ? ' описание' : '';
-        const errorMessage = ERROR_MESSAGES.BAD_DATA_USER + nameError + aboutError;
+        const avatarLinkError = errors.avatar ? errors.avatar.message : '';
+        const errorMessage = ERROR_MESSAGES.BAD_DATA_USER + avatarLinkError;
         return res.status(STATUS_CODES.BAD_DATA).send({ message: errorMessage });
       }
       return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
