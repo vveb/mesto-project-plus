@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema<IUser>({
     type: String,
     minlength: [2, " Минимальная длина поля 'name' - 2 символа"],
     maxlength: [30, " Максимальная длина поля 'name' - 2 символа"],
-    default: `${DEFAULT_VALUES.USERNAME}_${Math.ceil(Math.random() * 10000000)}`
+    default: DEFAULT_VALUES.USERNAME,
   },
   about: {
     type: String,

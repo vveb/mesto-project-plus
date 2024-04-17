@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import bcrypt from 'bcrypt';
 import STATUS_CODES from "../utils/status-codes";
 import ERROR_MESSAGES from "../utils/error-messages";
 import User from "../models/user";
@@ -25,12 +26,13 @@ export const createUser = async (req: Request, res: Response) => {
   const {
     name, about, avatar, email, password
   } = req.body;
+  const hash = await bcrypt.hash(password, 10);
   return User.create({
     name,
     about,
     avatar,
     email,
-    password,
+    password: hash,
   })
     .then((user) => res.status(STATUS_CODES.CREATED).send({ data: user }))
     .catch((err) => {
