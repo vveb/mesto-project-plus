@@ -104,19 +104,13 @@ export const updateAvatar = (req: Request, res: Response) => {
 export const login = (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  User.findOne({ email })
-    .orFail()
-    .then((user) => bcrypt.compare(password, user.password)
-      .then((matched) => {
-        if (!matched) {
-          throw new Error(ERROR_MESSAGES.BAD_DATA_AUTHORIZATION);
-        }
-        const token = jwt.sign({ _id: user._id }, 'bonne-mere', { expiresIn: '1h' });
-        res.cookie('token', token, { httpOnly: true });
-        return res.send({ message: 'Welcome!' });
-      })
-    )
-    .catch(() => {
-      res.status(STATUS_CODES.UNAUTHORIZED).send({ message: ERROR_MESSAGES.BAD_DATA_AUTHORIZATION });
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'bonne-mere', { expiresIn: '1h' });
+      res.cookie('token', token, { httpOnly: true });
+      return res.send({ message: 'Welcome!' });
+    })
+    .catch((err) => {
+      res.status(STATUS_CODES.UNAUTHORIZED).send({ message: err.message });
     });
 };

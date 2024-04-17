@@ -1,5 +1,7 @@
-import mongoose, { model } from 'mongoose';
+import mongoose, { model, Model } from 'mongoose';
 import validator from 'validator';
+import bcrypt from 'bcrypt';
+import ERROR_MESSAGES from '../utils/error-messages';
 import DEFAULT_VALUES from '../utils/default-values';
 
 interface IUser {
@@ -10,7 +12,11 @@ interface IUser {
   password: string,
 }
 
-const userSchema = new mongoose.Schema<IUser>({
+interface UserModel extends Model<IUser> {
+  findUserByCredentials: (email: string, password: string) => Promise<mongoose.Document<unknown, any, IUser>>
+}
+
+const userSchema = new mongoose.Schema<IUser, UserModel>({
   name: {
     type: String,
     minlength: [2, " Минимальная длина поля 'name' - 2 символа"],
@@ -46,4 +52,20 @@ const userSchema = new mongoose.Schema<IUser>({
   },
 }, { versionKey: false });
 
-export default model<IUser>('user', userSchema);
+userSchema.static('findUserByCredentials', function findUserByCredentials(email: string, password: string) {
+  return this.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error(ERROR_MESSAGES.BAD_DATA_AUTHORIZATION));
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error(ERROR_MESSAGES.BAD_DATA_AUTHORIZATION));
+          }
+          return user;
+        });
+    });
+});
+
+export default model<IUser, UserModel>('user', userSchema);
