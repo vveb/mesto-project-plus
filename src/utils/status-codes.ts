@@ -1,7 +1,8 @@
 enum STATUS_CODES {
   CREATED = 201,
-  NOT_FOUND = 404,
   BAD_DATA = 400,
+  NOT_FOUND = 404,
+  CONFLICT = 409,
   SERVER = 500,
 }
 

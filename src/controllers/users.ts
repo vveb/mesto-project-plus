@@ -21,12 +21,16 @@ export const getUserById = (req: Request, res: Response) => User.findById(req.pa
     return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
   });
 
-export const createUser = (req: Request, res: Response) => {
-  const { name, about, avatar } = req.body;
+export const createUser = async (req: Request, res: Response) => {
+  const {
+    name, about, avatar, email, password
+  } = req.body;
   return User.create({
     name,
     about,
     avatar,
+    email,
+    password,
   })
     .then((user) => res.status(STATUS_CODES.CREATED).send({ data: user }))
     .catch((err) => {
@@ -35,8 +39,13 @@ export const createUser = (req: Request, res: Response) => {
         const nameError = errors.name ? errors.name.message : '';
         const aboutError = errors.about ? errors.about.message : '';
         const avatarError = errors.avatar ? errors.avatar.message : '';
-        const errorMessage = ERROR_MESSAGES.BAD_DATA_USER + nameError + aboutError + avatarError;
+        const emailError = errors.email ? errors.email.message : '';
+        const passwordError = errors.password ? errors.password.message : '';
+        const errorMessage = ERROR_MESSAGES.BAD_DATA_USER + nameError + aboutError + avatarError + emailError + passwordError;
         return res.status(STATUS_CODES.BAD_DATA).send({ message: errorMessage });
+      }
+      if (err.code === 11000) {
+        return res.status(STATUS_CODES.CONFLICT).send({ message: ERROR_MESSAGES.USER_EXISTS });
       }
       return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
     });
