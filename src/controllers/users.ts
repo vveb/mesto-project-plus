@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import STATUS_CODES from "../utils/status-codes";
 import ERROR_MESSAGES from "../utils/error-messages";
 import User from "../models/user";
+import AUTH_KEY from "../utils/auth-code";
 
 export const getUsers = (_req: Request, res: Response) => User.find({})
   .then((users) => res.send({ data: users }))
@@ -56,8 +57,8 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const updateUserInfo = (req: Request, res: Response) => {
   const { name, about } = req.body;
-  const { _id } = req.user;
-  return User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
+  // const { _id } = req.user;
+  return User.findByIdAndUpdate(req.user, { name, about }, { new: true, runValidators: true })
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
@@ -80,8 +81,8 @@ export const updateUserInfo = (req: Request, res: Response) => {
 
 export const updateAvatar = (req: Request, res: Response) => {
   const { link } = req.body;
-  const { _id } = req.user;
-  return User.findByIdAndUpdate(_id, { avatar: link }, { new: true, runValidators: true })
+  // const { _id } = req.user;
+  return User.findByIdAndUpdate(req.user, { avatar: link }, { new: true, runValidators: true })
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
@@ -106,7 +107,7 @@ export const login = (req: Request, res: Response) => {
 
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'bonne-mere', { expiresIn: '1h' });
+      const token = jwt.sign({ _id: user._id }, AUTH_KEY, { expiresIn: '15m' });
       res.cookie('token', token, { httpOnly: true });
       return res.send({ message: 'Welcome!' });
     })

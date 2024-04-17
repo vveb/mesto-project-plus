@@ -56,12 +56,12 @@ userSchema.static('findUserByCredentials', function findUserByCredentials(email:
   return this.findOne({ email })
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error(ERROR_MESSAGES.BAD_DATA_AUTHORIZATION));
+        return Promise.reject(new Error(ERROR_MESSAGES.AUTHORIZATION_BAD_DATA));
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error(ERROR_MESSAGES.BAD_DATA_AUTHORIZATION));
+            return Promise.reject(new Error(ERROR_MESSAGES.AUTHORIZATION_BAD_DATA));
           }
           return user;
         });

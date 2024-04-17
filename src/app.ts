@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import helmet from 'helmet';
 import path from 'path';
 import mongoose from 'mongoose';
@@ -21,14 +21,6 @@ app.use(cookieParser());
 app.get('/', (req: Request, res: Response) => {
   res.send(`<h2>Это бекэнд, а ты чего ожидал(а)?</h2>
   ${JSON.stringify(req.query)}`);
-});
-
-app.use((req: Request, _res: Response, next: NextFunction) => {
-  req.user = {
-    _id: '661a8063af3fa0be39ce6f28' // вставьте сюда _id созданного в предыдущем пункте пользователя
-  };
-
-  next();
 });
 
 app.use(userRouter);

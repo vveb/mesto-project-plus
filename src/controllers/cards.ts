@@ -4,17 +4,16 @@ import ERROR_MESSAGES from "../utils/error-messages";
 import Card from "../models/card";
 
 export const getCards = (_req: Request, res: Response) => Card.find({})
-  // .populate('owner')
+  .populate('owner')
   .then((cards) => res.send({ cards }))
   .catch(() => res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER }));
 
 export const createCard = (req: Request, res: Response) => {
   const { name, link } = req.body;
-  const { _id } = req.user;
   return Card.create({
     name,
     link,
-    owner: _id,
+    owner: req.user,
   })
     .then((card) => res.status(STATUS_CODES.CREATED).send({ data: card }))
     .catch((err) => {
@@ -41,7 +40,7 @@ export const deleteCard = (req: Request, res: Response) => Card.findByIdAndDelet
 
 export const likeCard = (req: Request, res: Response) => Card.findByIdAndUpdate(
   req.params.cardId,
-  { $addToSet: { likes: req.user._id } },
+  { $addToSet: { likes: req.user } },
   { new: true })
   .orFail()
   .then((card) => res.send({ data: card }))
@@ -57,7 +56,7 @@ export const likeCard = (req: Request, res: Response) => Card.findByIdAndUpdate(
 
 export const dislikeCard = (req: Request, res: Response) => Card.findByIdAndUpdate(
   req.params.cardId,
-  { $pull: { likes: req.user._id } },
+  { $pull: { likes: req.user } },
   { new: true })
   .orFail()
   .then((card) => res.send({ data: card }))
@@ -66,7 +65,7 @@ export const dislikeCard = (req: Request, res: Response) => Card.findByIdAndUpda
       return res.status(STATUS_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.DISLIKE_CARD_NOT_FOUND });
     }
     if (err.name === 'CastError') {
-      return res.status(STATUS_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.BAD_DATA_DISLIKE });
+      return res.status(STATUS_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.BAD_DATA_DISLIKE, err, user: req.user });
     }
     return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
   });
