@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import path from 'path';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
 import userRouter from './routes/users';
 import cardRouter from './routes/cards';
 import notFoundRouter from './routes/404-not-found';
@@ -15,9 +16,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// определяем обработчик для маршрута "/"
+app.use(cookieParser());
+
 app.get('/', (req: Request, res: Response) => {
-  // отправляем ответ
   res.send(`<h2>Это бекэнд, а ты чего ожидал(а)?</h2>
   ${JSON.stringify(req.query)}`);
 });

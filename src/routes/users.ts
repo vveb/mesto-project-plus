@@ -1,15 +1,16 @@
 import { Router } from "express";
 import {
-  createUser, getUserById, getUsers, updateAvatar, updateUserInfo
+  createUser, getUserById, getUsers, updateAvatar, updateUserInfo, login
 } from "../controllers/users";
 
 const router = Router();
 
 router.get('/users', getUsers);
 router.get('/users/:userId', getUserById);
-router.post('/users', createUser);
 router.patch('/users/me', updateUserInfo);
 router.patch('/users/me/avatar', updateAvatar);
+router.post('/signin', login);
+router.post('/signup', createUser);
 
 // Оставил для себя реализацию логики на try-catch
 // router.post('/users', async (req: Request, res: Response, next: NextFunction) => {

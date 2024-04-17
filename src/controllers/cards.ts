@@ -4,7 +4,8 @@ import ERROR_MESSAGES from "../utils/error-messages";
 import Card from "../models/card";
 
 export const getCards = (_req: Request, res: Response) => Card.find({})
-  .then((cards) => res.send({ data: cards }))
+  // .populate('owner')
+  .then((cards) => res.send({ cards }))
   .catch(() => res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER }));
 
 export const createCard = (req: Request, res: Response) => {

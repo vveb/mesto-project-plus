@@ -1,4 +1,4 @@
-import mongoose, { ObjectId, model } from "mongoose";
+import mongoose, { ObjectId, Schema, model } from "mongoose";
 import validator from "validator";
 
 interface ICard {
@@ -25,12 +25,12 @@ const cardSchema = new mongoose.Schema<ICard>({
     required: [true, " Поле 'link' обязательно для заполнения"],
   },
   owner: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'user',
     required: [true, " Поле 'owner' обязательно для заполнения"],
   },
   likes: [{
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    type: [{ type: Schema.Types.ObjectId, ref: 'user' }],
     default: [],
   }],
   createdAt: {
