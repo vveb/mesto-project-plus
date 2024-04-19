@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import userRouter from './routes/users';
 import cardRouter from './routes/cards';
 import notFoundRouter from './routes/404-not-found';
+import errorMiddleware from './middlewares/errors';
 
 const { PORT = 3000 } = process.env;
 // создаем объект приложения
@@ -26,6 +27,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use(userRouter);
 app.use(cardRouter);
 app.use(notFoundRouter);
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

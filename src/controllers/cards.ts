@@ -1,14 +1,16 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import STATUS_CODES from "../utils/status-codes";
 import ERROR_MESSAGES from "../utils/error-messages";
 import Card from "../models/card";
+import BadDataError from "../errors/bad-data-error";
+import NotFoundError from "../errors/not-found-error";
 
-export const getCards = (_req: Request, res: Response) => Card.find({})
+export const getCards = (_req: Request, res: Response, next: NextFunction) => Card.find({})
   .populate('owner')
   .then((cards) => res.send({ cards }))
-  .catch(() => res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER }));
+  .catch(next);
 
-export const createCard = (req: Request, res: Response) => {
+export const createCard = (req: Request, res: Response, next: NextFunction) => {
   const { name, link } = req.body;
   return Card.create({
     name,
@@ -22,50 +24,42 @@ export const createCard = (req: Request, res: Response) => {
         const nameError = errors.name ? errors.name.message : '';
         const linkError = errors.link ? errors.link.message : '';
         const errorMessage = ERROR_MESSAGES.BAD_DATA_CARD + nameError + linkError;
-        return res.status(STATUS_CODES.BAD_DATA).send({ message: errorMessage });
+        BadDataError(errorMessage);
       }
-      return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
-    });
+      return next(err);
+    })
+    .catch(next);
 };
 
-export const deleteCard = (req: Request, res: Response) => Card.findByIdAndDelete(req.params.cardId)
-  .orFail()
+export const deleteCard = (req: Request, res: Response, next: NextFunction) => Card.findByIdAndDelete(req.params.cardId)
+  .orFail(() => NotFoundError(ERROR_MESSAGES.CARD_NOT_FOUND))
   .then((card) => res.send({ data: card }))
-  .catch((err) => {
-    if (err.name === 'DocumentNotFoundError') {
-      return res.status(STATUS_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.CARD_NOT_FOUND });
-    }
-    return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
-  });
+  .catch(next);
 
-export const likeCard = (req: Request, res: Response) => Card.findByIdAndUpdate(
+export const likeCard = (req: Request, res: Response, next: NextFunction) => Card.findByIdAndUpdate(
   req.params.cardId,
   { $addToSet: { likes: req.user } },
   { new: true })
-  .orFail()
+  .orFail(() => NotFoundError(ERROR_MESSAGES.LIKE_CARD_NOT_FOUND))
   .then((card) => res.send({ data: card }))
   .catch((err) => {
-    if (err.name === 'DocumentNotFoundError') {
-      return res.status(STATUS_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.LIKE_CARD_NOT_FOUND });
-    }
     if (err.name === 'CastError') {
       return res.status(STATUS_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.BAD_DATA_LIKE });
     }
-    return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
-  });
+    return next();
+  })
+  .catch(next);
 
-export const dislikeCard = (req: Request, res: Response) => Card.findByIdAndUpdate(
+export const dislikeCard = (req: Request, res: Response, next: NextFunction) => Card.findByIdAndUpdate(
   req.params.cardId,
   { $pull: { likes: req.user } },
   { new: true })
-  .orFail()
+  .orFail(() => NotFoundError(ERROR_MESSAGES.DISLIKE_CARD_NOT_FOUND))
   .then((card) => res.send({ data: card }))
   .catch((err) => {
-    if (err.name === 'DocumentNotFoundError') {
-      return res.status(STATUS_CODES.NOT_FOUND).send({ message: ERROR_MESSAGES.DISLIKE_CARD_NOT_FOUND });
-    }
     if (err.name === 'CastError') {
-      return res.status(STATUS_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.BAD_DATA_DISLIKE, err, user: req.user });
+      return res.status(STATUS_CODES.BAD_DATA).send({ message: ERROR_MESSAGES.BAD_DATA_DISLIKE });
     }
-    return res.status(STATUS_CODES.SERVER).send({ message: ERROR_MESSAGES.SERVER });
-  });
+    return next(err);
+  })
+  .catch(next);

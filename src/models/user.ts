@@ -3,6 +3,7 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import ERROR_MESSAGES from '../utils/error-messages';
 import DEFAULT_VALUES from '../utils/default-values';
+import AuthError from '../errors/auth-error';
 
 interface IUser {
   name: string,
@@ -56,12 +57,12 @@ userSchema.static('findUserByCredentials', function findUserByCredentials(email:
   return this.findOne({ email })
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error(ERROR_MESSAGES.AUTHORIZATION_BAD_DATA));
+        return Promise.reject(AuthError(ERROR_MESSAGES.AUTHORIZATION_BAD_DATA));
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error(ERROR_MESSAGES.AUTHORIZATION_BAD_DATA));
+            return Promise.reject(AuthError(ERROR_MESSAGES.AUTHORIZATION_BAD_DATA));
           }
           return user;
         });

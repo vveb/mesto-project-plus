@@ -1,11 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { Types } from "mongoose";
 import ERROR_MESSAGES from "../utils/error-messages";
 import STATUS_CODES from "../utils/status-codes";
 import AUTH_KEY from "../utils/auth-code";
 
+// Не нашел менее костыльного решения, пытался сделать в папке @types свое глобальное описание, но не получилось
+// Буду рад комментариям по этому поводу, спасибо
 interface JwtPayloadId extends JwtPayload {
-  _id: string;
+  _id: string | Types.ObjectId;
 }
 
 const handleAuthError = (res: Response) => {
