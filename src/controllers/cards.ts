@@ -21,14 +21,16 @@ export const createCard = (req: Request, res: Response, next: NextFunction) => {
     .catch(next);
 };
 
-export const deleteCard = (req: Request, res: Response, next: NextFunction) => Card.findByIdAndDelete(req.params.cardId)
+export const deleteCard = (req: Request, res: Response, next: NextFunction) => Card.findById(req.params.cardId)
   .orFail(() => NotFoundError(ERROR_MESSAGES.CARD_NOT_FOUND))
   .then((card) => {
     const currentUserId = req.user;
     if (String(card.owner) !== currentUserId) {
       return ForbiddenError(ERROR_MESSAGES.FORBIDDEN_DELETE_CARD);
     }
-    return res.send({ success: true, data: card });
+    return Card.findByIdAndDelete(card)
+      .then((deletedCard) => res.send({ success: true, data: deletedCard }))
+      .catch(next);
   })
   .catch(next);
 
