@@ -3,10 +3,11 @@ import helmet from 'helmet';
 import path from 'path';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
-import userRouter from './routes/users';
-import cardRouter from './routes/cards';
-import notFoundRouter from './routes/404-not-found';
-import errorMiddleware from './middlewares/errors';
+import { errors } from 'celebrate';
+import UserRouter from './routes/users';
+import CardRouter from './routes/cards';
+import NotFoundRouter from './routes/404-not-found';
+import ErrorsMiddleware from './middlewares/errors';
 
 const { PORT = 3000 } = process.env;
 // создаем объект приложения
@@ -24,10 +25,11 @@ app.get('/', (req: Request, res: Response) => {
   ${JSON.stringify(req.query)}`);
 });
 
-app.use(userRouter);
-app.use(cardRouter);
-app.use(notFoundRouter);
-app.use(errorMiddleware);
+app.use(UserRouter);
+app.use(CardRouter);
+app.use(NotFoundRouter);
+app.use(errors());
+app.use(ErrorsMiddleware);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

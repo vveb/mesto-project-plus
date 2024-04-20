@@ -20,14 +20,14 @@ interface UserModel extends Model<IUser> {
 const userSchema = new mongoose.Schema<IUser, UserModel>({
   name: {
     type: String,
-    minlength: [2, " Минимальная длина поля 'name' - 2 символа"],
-    maxlength: [30, " Максимальная длина поля 'name' - 2 символа"],
+    minlength: [2, "Минимальная длина поля 'name' - 2 символа"],
+    maxlength: [30, "Максимальная длина поля 'name' - 2 символа"],
     default: DEFAULT_VALUES.USERNAME,
   },
   about: {
     type: String,
-    minlength: [2, " Минимальная длина поля 'about' - 2 символа"],
-    maxlength: [200, " Максимальная длина поля 'about' - 200 символов"],
+    minlength: [2, "Минимальная длина поля 'about' - 2 символа"],
+    maxlength: [200, "Максимальная длина поля 'about' - 200 символов"],
     default: DEFAULT_VALUES.ABOUT,
   },
   avatar: {
@@ -40,16 +40,16 @@ const userSchema = new mongoose.Schema<IUser, UserModel>({
   },
   email: {
     type: String,
-    required: [true, " Поле 'email' обязательно для заполнения"],
+    required: [true, "Поле 'email' обязательно для заполнения"],
     unique: true,
     validate: {
       validator: (v: string) => validator.isEmail(v),
-      message: " Некорректный email в поле 'email'"
+      message: "Некорректный email в поле 'email'"
     },
   },
   password: {
     type: String,
-    required: [true, " Поле 'password' обязательно для заполнения"],
+    required: [true, "Поле 'password' обязательно для заполнения"],
   },
 }, { versionKey: false });
 
