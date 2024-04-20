@@ -1,7 +1,7 @@
 import { Joi } from "celebrate";
 import VALIDATION_MESSAGES from "./validation-messages";
 
-const urlRegExp = (/((http|https):\/\/)(w{3}\.)?(((\d{1,3}\.){3}\d{1,3})|((\w-?)+\.(ru|com)))(:\d{2,5})?((\/.+)+)?\/?#?/);
+const urlRegExp = (/((http|https):\/\/)(w{3}\.)?(((\d{1,3}\.){3}\d{1,3})|((\w-?)+\.(\w{2,})))(:\d{2,5})?((\/.+)+)?\/?#?/);
 
 const emailSchema = Joi.string().required().email()
   .messages(VALIDATION_MESSAGES.email);

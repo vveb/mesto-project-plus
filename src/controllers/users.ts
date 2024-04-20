@@ -17,12 +17,11 @@ export const getUserById = (req: Request, res: Response, next: NextFunction) => 
   .then((user) => res.send({ data: user }))
   .catch(next);
 
-export const createUser = async (req: Request, res: Response, next: NextFunction) => {
+export const createUser = (req: Request, res: Response, next: NextFunction) => {
   const {
     name, about, avatar, email, password
   } = req.body;
-  const hash = await bcrypt.hash(password, 10);
-  return User.create({
+  bcrypt.hash(password, 10).then((hash) => User.create({
     name,
     about,
     avatar,
@@ -30,13 +29,15 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     password: hash,
   })
     .then((user) => res.status(STATUS_CODES.CREATED).send({ data: user }))
+    // Этот catch относится к промису create
     .catch((err) => {
       if (err.code === 11000) {
         return next(ConflictError(ERROR_MESSAGES.USER_EXISTS));
       }
       return next(err);
-    })
-    .catch(next);// Без этого catch ошибка летит в терминал, и сервер падает
+    }))
+    // Этот catch относится к промису bcrypt
+    .catch(next);
 };
 
 export const updateUserInfo = (req: Request, res: Response, next: NextFunction) => {

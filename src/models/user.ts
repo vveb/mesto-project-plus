@@ -33,8 +33,13 @@ const userSchema = new mongoose.Schema<IUser, UserModel>({
   avatar: {
     type: String,
     validate: {
-      validator: (v: string) => validator.isURL(v),
-      message: " Некорректный URL в поле 'avatar'",
+      validator: (v: string) => validator.isURL(v, {
+        protocols: ['http', 'https'],
+        require_protocol: true,
+        require_valid_protocol: true,
+        require_tld: true,
+      }),
+      message: "Некорректный URL в поле 'avatar'",
     },
     default: DEFAULT_VALUES.AVATAR,
   },
