@@ -1,6 +1,13 @@
-import mongoose, { Schema, model } from "mongoose";
+import mongoose, { Schema, model, Model } from "mongoose";
 import validator from "validator";
 import { ICard } from "../services/interfaces";
+import ForbiddenError from "../errors/forbidden-error";
+import ERROR_MESSAGES from "../utils/error-messages";
+import NotFoundError from "../errors/not-found-error";
+
+interface CardModel extends Model<ICard> {
+  deleteAllowedCard: (cardId: string, currentUserId: string) => Promise<mongoose.Document<unknown, any, ICard>>
+}
 
 const cardSchema = new mongoose.Schema<ICard>({
   name: {
@@ -32,4 +39,21 @@ const cardSchema = new mongoose.Schema<ICard>({
   },
 }, { versionKey: false });
 
-export default model<ICard>('card', cardSchema);
+cardSchema.static(
+  'deleteAllowedCard',
+  function deleteAllowedCard(cardId: string, currentUserId: string) {
+    return this.findById(cardId)
+      .then((card: ICard) => {
+        if (!card) {
+          return Promise.reject(NotFoundError(ERROR_MESSAGES.CARD_NOT_FOUND));
+        }
+        if (String(card.owner) !== currentUserId) {
+          return Promise.reject(ForbiddenError(ERROR_MESSAGES.FORBIDDEN_DELETE_CARD));
+        }
+        return this.findByIdAndDelete(card)
+          .then((deletedCard: ICard) => deletedCard);
+      });
+  }
+);
+
+export default model<ICard, CardModel>('card', cardSchema);

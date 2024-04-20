@@ -3,7 +3,6 @@ import STATUS_CODES from "../utils/status-codes";
 import ERROR_MESSAGES from "../utils/error-messages";
 import Card from "../models/card";
 import NotFoundError from "../errors/not-found-error";
-import ForbiddenError from "../errors/forbidden-error";
 
 export const getCards = (_req: Request, res: Response, next: NextFunction) => Card.find({})
   .populate('owner')
@@ -21,18 +20,13 @@ export const createCard = (req: Request, res: Response, next: NextFunction) => {
     .catch(next);
 };
 
-export const deleteCard = (req: Request, res: Response, next: NextFunction) => Card.findById(req.params.cardId)
-  .orFail(() => NotFoundError(ERROR_MESSAGES.CARD_NOT_FOUND))
-  .then((card) => {
-    const currentUserId = req.user;
-    if (String(card.owner) !== currentUserId) {
-      return ForbiddenError(ERROR_MESSAGES.FORBIDDEN_DELETE_CARD);
-    }
-    return Card.findByIdAndDelete(card)
-      .then((deletedCard) => res.send({ success: true, data: deletedCard }))
-      .catch(next);
-  })
-  .catch(next);
+export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
+  const cardIdToDelete = String(req.params.cardId);
+  const currentUserId = String(req.user);
+  Card.deleteAllowedCard(cardIdToDelete, currentUserId)
+    .then((deletedCard) => res.send({ success: true, data: deletedCard }))
+    .catch(next);
+};
 
 export const likeCard = (req: Request, res: Response, next: NextFunction) => Card.findByIdAndUpdate(
   req.params.cardId,
