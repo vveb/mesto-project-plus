@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import STATUS_CODES from "../utils/status-codes";
 import ERROR_MESSAGES from "../utils/error-messages";
 import User from "../models/user";
-import AUTH_KEY from "../utils/auth-code";
+import AUTH_KEY from "../utils/auth-key";
 import NotFoundError from "../errors/not-found-error";
 import ConflictError from "../errors/conflict-error";
 import { IUser } from "../services/interfaces";

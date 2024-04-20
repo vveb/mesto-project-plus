@@ -8,6 +8,7 @@ import UserRouter from './routes/users';
 import CardRouter from './routes/cards';
 import NotFoundRouter from './routes/404-not-found';
 import ErrorsMiddleware from './middlewares/errors';
+import Logger from './middlewares/logger';
 
 const { PORT = 3000 } = process.env;
 // создаем объект приложения
@@ -25,9 +26,14 @@ app.get('/', (req: Request, res: Response) => {
   ${JSON.stringify(req.query)}`);
 });
 
+app.use(Logger.requestLogger);
+
 app.use(UserRouter);
 app.use(CardRouter);
 app.use(NotFoundRouter);
+
+app.use(Logger.errorLogger);
+
 app.use(errors());
 app.use(ErrorsMiddleware);
 

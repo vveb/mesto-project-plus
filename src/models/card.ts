@@ -50,8 +50,7 @@ cardSchema.static(
         if (String(card.owner) !== currentUserId) {
           return Promise.reject(ForbiddenError(ERROR_MESSAGES.FORBIDDEN_DELETE_CARD));
         }
-        return this.findByIdAndDelete(card)
-          .then((deletedCard: ICard) => deletedCard);
+        return this.findByIdAndDelete(card).then((deletedCard: ICard) => deletedCard);
       });
   }
 );
