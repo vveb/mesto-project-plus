@@ -1,13 +1,6 @@
-import mongoose, { ObjectId, Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 import validator from "validator";
-
-interface ICard {
-  name: string,
-  link: string,
-  owner: ObjectId,
-  likes: ObjectId[],
-  createdAt: Date,
-}
+import { ICard } from "../services/interfaces";
 
 const cardSchema = new mongoose.Schema<ICard>({
   name: {

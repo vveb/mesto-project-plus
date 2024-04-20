@@ -10,6 +10,6 @@ interface ErrorWithStatusCode extends Error {
 export default (err: ErrorWithStatusCode, req: Request, res: Response, next: NextFunction) => {
   const { statusCode = STATUS_CODES.SERVER, message } = err;
   res
-    .status(STATUS_CODES.SERVER)
+    .status(statusCode)
     .send({ message: statusCode === STATUS_CODES.SERVER ? ERROR_MESSAGES.SERVER : message });
 };

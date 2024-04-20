@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-  createUser, getUserById, getUsers, updateAvatar, updateUserInfo, login
+  createUser, getUserById, getUsers, updateAvatar, updateUserInfo, login, getCurrentUserInfo
 } from "../controllers/users";
 import auth from '../middlewares/auth';
 import VALIDATORS from "../middlewares/validation";
@@ -12,6 +12,7 @@ router.post('/signup', VALIDATORS.signUp, createUser);
 
 router.use(auth);
 router.get('/users', getUsers);
+router.get('/users/me', VALIDATORS.userId, getCurrentUserInfo);
 router.get('/users/:userId', VALIDATORS.userId, getUserById);
 router.patch('/users/me', VALIDATORS.updateUserInfo, updateUserInfo);
 router.patch('/users/me/avatar', VALIDATORS.updateAvatar, updateAvatar);

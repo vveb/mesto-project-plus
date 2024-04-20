@@ -4,14 +4,7 @@ import bcrypt from 'bcrypt';
 import ERROR_MESSAGES from '../utils/error-messages';
 import DEFAULT_VALUES from '../utils/default-values';
 import AuthError from '../errors/auth-error';
-
-interface IUser {
-  name: string,
-  about: string,
-  avatar: string,
-  email: string,
-  password: string,
-}
+import { IUser } from '../services/interfaces';
 
 interface UserModel extends Model<IUser> {
   findUserByCredentials: (email: string, password: string) => Promise<mongoose.Document<unknown, any, IUser>>

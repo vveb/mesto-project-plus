@@ -7,6 +7,9 @@ import User from "../models/user";
 import AUTH_KEY from "../utils/auth-code";
 import NotFoundError from "../errors/not-found-error";
 import ConflictError from "../errors/conflict-error";
+import { IUser } from "../services/interfaces";
+
+const getUserNoPassword = ({ password, ...rest }: IUser) => rest;
 
 export const getUsers = (_req: Request, res: Response, next: NextFunction) => User.find({})
   .then((users) => res.send({ data: users }))
@@ -15,6 +18,10 @@ export const getUsers = (_req: Request, res: Response, next: NextFunction) => Us
 export const getUserById = (req: Request, res: Response, next: NextFunction) => User.findById(req.params.userId)
   .orFail(() => NotFoundError(ERROR_MESSAGES.USER_NOT_FOUND))
   .then((user) => res.send({ data: user }))
+  .catch(next);
+
+export const getCurrentUserInfo = (req: Request, res: Response, next: NextFunction) => User.findById(req.user)
+  .then((data) => res.send(data))
   .catch(next);
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
@@ -28,7 +35,7 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
     email,
     password: hash,
   })
-    .then((user) => res.status(STATUS_CODES.CREATED).send({ data: user }))
+    .then((user) => res.status(STATUS_CODES.CREATED).send({ data: getUserNoPassword(user.toObject()) }))
     // Этот catch относится к промису create
     .catch((err) => {
       if (err.code === 11000) {
@@ -63,7 +70,7 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, AUTH_KEY, { expiresIn: '15m' });
       res.cookie('token', token, { httpOnly: true });
-      return res.send({ message: 'Welcome!' });
+      return res.send({ message: 'Welcome!', data: getUserNoPassword(user.toObject()) });
     })
     .catch(next);
 };
