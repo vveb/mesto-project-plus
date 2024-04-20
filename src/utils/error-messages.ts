@@ -14,7 +14,9 @@ enum ERROR_MESSAGES {
   AUTHORIZATION_BAD_DATA = "Пользователь не авторизован: неправильные логин или пароль",
   AUTHORIZATION_NEED = "Необходима авторизация",
   SOURCE_NOT_FOUND = "Запрашиваемый ресурс не найден",
-  CONFLICT = "Конфликт запроса с текущим состоянием ресурса"
+  CONFLICT = "Конфликт запроса с текущим состоянием ресурса",
+  FORBIDDEN = "У Вас нет прав для совершения данного действия",
+  FORBIDDEN_DELETE_CARD = "Это не ваша карточка",
 }
 
 export default ERROR_MESSAGES;
