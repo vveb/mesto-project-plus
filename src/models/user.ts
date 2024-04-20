@@ -55,11 +55,12 @@ const userSchema = new mongoose.Schema<IUser, UserModel>({
   password: {
     type: String,
     required: [true, "Поле 'password' обязательно для заполнения"],
+    select: false,
   },
 }, { versionKey: false });
 
 userSchema.static('findUserByCredentials', function findUserByCredentials(email: string, password: string) {
-  return this.findOne({ email })
+  return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         return Promise.reject(AuthError(ERROR_MESSAGES.AUTHORIZATION_BAD_DATA));
