@@ -21,8 +21,8 @@ const about = {
   "string.max": "Поле {#label} должно содержать не более {#limit} символов",
 };
 
-const avatar = {
-  "string.pattern.base": "Некорректный URL для аватара в поле {#label}",
+const link = {
+  "string.pattern.base": "Некорректный URL в поле {#label}",
   "string.empty": "Передано пустое значение в поле {#label}",
 };
 
@@ -31,13 +31,19 @@ const userId = {
   "string.hex": "ID пользователя может содержать только цифры, записанные в 16-ричной системе счисления",
 };
 
+const cardId = {
+  "string.length": "ID карточки должен содержать {#limit} символа",
+  "string.hex": "ID карточки может содержать только цифры, записанные в 16-ричной системе счисления",
+};
+
 const VALIDATION_MESSAGES = {
   email,
   password,
   name,
   about,
-  avatar,
-  userId
+  link,
+  userId,
+  cardId,
 };
 
 export default VALIDATION_MESSAGES;

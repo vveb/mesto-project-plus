@@ -11,17 +11,19 @@ const nameSchema = Joi.string().min(2).max(30)
   .messages(VALIDATION_MESSAGES.name);
 const aboutSchema = Joi.string().min(2).max(200)
   .messages(VALIDATION_MESSAGES.about);
-const avatarSchema = Joi.string().pattern(urlRegExp)
-  .messages(VALIDATION_MESSAGES.avatar);
+const linkSchema = Joi.string().pattern(urlRegExp)
+  .messages(VALIDATION_MESSAGES.link);
 const userIdSchema = Joi.string().length(24).hex()
   .messages(VALIDATION_MESSAGES.userId);
+const cardIdSchema = Joi.string().length(24).hex()
+  .messages(VALIDATION_MESSAGES.cardId);
 
 const signUp = Joi.object().keys({
   email: emailSchema,
   password: passwordSchema,
   name: nameSchema,
   about: aboutSchema,
-  avatar: avatarSchema,
+  avatar: linkSchema,
 });
 
 const signIn = Joi.object().keys({
@@ -35,11 +37,20 @@ const updateUserInfo = Joi.object().keys({
 });
 
 const updateAvatar = Joi.object().keys({
-  link: avatarSchema,
+  link: linkSchema,
 });
 
 const userId = Joi.object().keys({
   userId: userIdSchema,
+});
+
+const newCard = Joi.object().keys({
+  name: nameSchema,
+  link: linkSchema,
+});
+
+const cardId = Joi.object().keys({
+  cardId: cardIdSchema,
 });
 
 const VALIDATION_SCHEMAS = {
@@ -48,6 +59,8 @@ const VALIDATION_SCHEMAS = {
   updateUserInfo,
   updateAvatar,
   userId,
+  newCard,
+  cardId,
 };
 
 export default VALIDATION_SCHEMAS;
