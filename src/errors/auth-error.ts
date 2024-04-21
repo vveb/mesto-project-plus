@@ -6,7 +6,7 @@ class AuthError extends Error {
 
   constructor(message = ERROR_MESSAGES.AUTHORIZATION_NEED as string) {
     super(message);
-    this.statusCode = STATUS_CODES.BAD_DATA;
+    this.statusCode = STATUS_CODES.UNAUTHORIZED;
   }
 }
 

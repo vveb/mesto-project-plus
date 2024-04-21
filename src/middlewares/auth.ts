@@ -5,8 +5,6 @@ import ERROR_MESSAGES from "../utils/error-messages";
 import AUTH_KEY from "../utils/auth-key";
 import AuthError from "../errors/auth-error";
 
-// Не нашел менее костыльного решения, пытался сделать в папке @types свое глобальное описание, но не получилось
-// Буду рад комментариям по этому поводу, спасибо
 interface JwtPayloadId extends JwtPayload {
   _id: string | Types.ObjectId;
 }
