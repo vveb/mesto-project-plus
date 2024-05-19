@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
+import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import path from 'path';
 import mongoose from 'mongoose';
@@ -10,12 +11,20 @@ import CardRouter from './routes/cards';
 import NotFoundRouter from './routes/404-not-found';
 import ErrorsMiddleware from './middlewares/errors';
 import Logger from './middlewares/logger';
+import LIMITER from './utils/limiter-constants';
 
 dotenv.config();
 
 const { PORT = 3000 } = process.env;
 // создаем объект приложения
 const app = express();
+
+const limiter = rateLimit({
+  windowMs: LIMITER.TIME,
+  max: LIMITER.REQUEST_AMOUNT,
+});
+app.use(limiter);
+
 app.use(helmet());
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
