@@ -41,6 +41,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.0",
     "validator": "^13.11.0",
-    "winston": "^3.13.0"
+    "winston": "^3.13.0",
+    "winston-daily-rotate-file": "^5.0.0"
   }
 }

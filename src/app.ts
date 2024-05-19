@@ -18,7 +18,7 @@ dotenv.config();
 const { PORT = 3000 } = process.env;
 // создаем объект приложения
 const app = express();
-
+// лимитер запросов против DDoS и brute force атак
 const limiter = rateLimit({
   windowMs: LIMITER.TIME,
   max: LIMITER.REQUEST_AMOUNT,
