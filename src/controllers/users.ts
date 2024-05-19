@@ -69,7 +69,7 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, AUTH_KEY, { expiresIn: '15m' });
-      res.cookie('token', token, { httpOnly: true });
+      res.cookie('token', token, { httpOnly: true, sameSite: true });
       return res.send({ message: 'Welcome!', data: getUserNoPassword(user.toObject()) });
     })
     .catch(next);
