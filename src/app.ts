@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import dotenv from 'dotenv';
 import helmet from 'helmet';
 import path from 'path';
 import mongoose from 'mongoose';
@@ -9,6 +10,8 @@ import CardRouter from './routes/cards';
 import NotFoundRouter from './routes/404-not-found';
 import ErrorsMiddleware from './middlewares/errors';
 import Logger from './middlewares/logger';
+
+dotenv.config();
 
 const { PORT = 3000 } = process.env;
 // создаем объект приложения

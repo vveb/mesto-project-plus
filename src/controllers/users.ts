@@ -4,11 +4,12 @@ import jwt from "jsonwebtoken";
 import STATUS_CODES from "../utils/status-codes";
 import ERROR_MESSAGES from "../utils/error-messages";
 import User from "../models/user";
-import AUTH_KEY from "../utils/auth-key";
 import NotFoundError from "../errors/not-found-error";
 import ConflictError from "../errors/conflict-error";
 import { IUser } from "../services/interfaces";
+import AUTH_KEY from "../utils/auth-key";
 
+const { NODE_ENV, TOKEN_SECRET_KEY } = process.env;
 const getUserNoPassword = ({ password, ...rest }: IUser) => rest;
 
 export const getUsers = (_req: Request, res: Response, next: NextFunction) => User.find({})
@@ -68,7 +69,7 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
 
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, AUTH_KEY, { expiresIn: '15m' });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? TOKEN_SECRET_KEY as jwt.Secret : AUTH_KEY, { expiresIn: '15m' });
       res.cookie('token', token, { httpOnly: true, sameSite: true });
       return res.send({ message: 'Welcome!', data: getUserNoPassword(user.toObject()) });
     })
